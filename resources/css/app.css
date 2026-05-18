@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark scrollbar for the code editor body */
+.editor-scroll::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+.editor-scroll::-webkit-scrollbar-track {
+    background: #1c1c1c;
+}
+.editor-scroll::-webkit-scrollbar-thumb {
+    background: #3d3d3d;
+    border-radius: 9999px;
+}
+.editor-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.editor-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #3d3d3d #1c1c1c;
+}
+
+/* Hide scrollbar on tab bar — still scrollable via touch/trackpad */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
