@@ -12,7 +12,7 @@ FROM php:8.2-fpm-alpine
 # Install system libs needed by PHP extensions, plus PECL build toolchain.
 # curl, mbstring, and xml are pre-compiled in php:8.2-fpm-alpine — no install needed.
 RUN apk add --no-cache libzip-dev icu-dev ${PHPIZE_DEPS} \
-    && docker-php-ext-install -j$(nproc) zip bcmath intl sockets \
+    && docker-php-ext-install -j$(nproc) zip bcmath intl \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del ${PHPIZE_DEPS} \
