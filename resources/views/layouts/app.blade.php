@@ -29,7 +29,7 @@
                     <a href="/docs" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Docs</a>
                     <a href="#pricing" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Pricing</a>
                     <a href="https://github.com/rdaplook" target="_blank" rel="noopener" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">GitHub</a>
-                    <a href="/register" class="px-4 py-1.5 text-sm font-medium bg-indigo-500 hover:bg-indigo-600 text-white rounded-md transition-colors">Get API Key</a>
+                    <a href="https://rapidapi.com/rdaplook/api/rdaplook" target="_blank" rel="noopener" class="px-4 py-1.5 text-sm font-medium bg-indigo-500 hover:bg-indigo-600 text-white rounded-md transition-colors">Get API Key</a>
                 </div>
 
                 {{-- Theme toggle --}}
@@ -48,7 +48,7 @@
                     </svg>
                 </button>
 
-                <a href="/register" class="sm:hidden px-3 py-1.5 text-xs font-medium bg-indigo-500 hover:bg-indigo-600 text-white rounded-md transition-colors">Get API Key</a>
+                <a href="https://rapidapi.com/rdaplook/api/rdaplook" target="_blank" rel="noopener" class="sm:hidden px-3 py-1.5 text-xs font-medium bg-indigo-500 hover:bg-indigo-600 text-white rounded-md transition-colors">Get API Key</a>
             </div>
         </div>
     </nav>

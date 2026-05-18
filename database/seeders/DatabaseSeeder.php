@@ -8,6 +8,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(PlanSeeder::class);
+        // No seed data required — API is stateless, auth handled by RapidAPI
     }
 }

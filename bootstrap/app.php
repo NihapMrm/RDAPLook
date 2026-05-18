@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Middleware\AuthenticateApiKey;
-use App\Http\Middleware\LogApiUsage;
-use App\Http\Middleware\RateLimitApiKey;
+use App\Http\Middleware\RapidApiMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,14 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'auth.api'  => AuthenticateApiKey::class,
-            'rate.api'  => RateLimitApiKey::class,
-            'log.api'   => LogApiUsage::class,
+            'rapidapi' => RapidApiMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (\Throwable $e, $request) {
-            if ($request->is('api/*') || $request->is('webhooks/*')) {
+            if ($request->is('api/*')) {
                 return response()->json([
                     'error'   => true,
                     'code'    => 'SERVER_ERROR',

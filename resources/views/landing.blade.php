@@ -425,72 +425,41 @@ fmt.<span class="text-amber-400">Println</span>(domain[<span class="text-emerald
     </section>
 
     {{-- ── Pricing ────────────────────────────────────────────────────────── --}}
-    <section id="pricing" class="py-16 px-4 sm:px-6 border-t border-[#e4e4e7] dark:border-[#1f1f1f]">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-2xl font-semibold tracking-tight mb-2">Pricing</h2>
-            <p class="text-[#71717a] text-sm mb-10">Start for free. Upgrade when you need to.</p>
+    <section id="pricing" class="py-20 px-4 sm:px-6 border-t border-[#e4e4e7] dark:border-[#1f1f1f]">
+        <div class="max-w-2xl mx-auto text-center">
+            <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">Pricing</p>
+            <h2 class="text-3xl font-semibold tracking-tight mb-4">Flexible plans on RapidAPI</h2>
+            <p class="text-[#71717a] leading-relaxed mb-8 max-w-lg mx-auto">
+                RDAPLook is hosted on RapidAPI with a free tier and paid plans to suit any usage.
+                Billing is managed through RapidAPI — no separate account needed.
+            </p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+                <a href="https://rapidapi.com/rdaplook/api/rdaplook" target="_blank" rel="noopener"
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors">
+                    View pricing on RapidAPI
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                </a>
+                <a href="/docs" class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-[#52525b] dark:text-[#a1a1aa] bg-[#f4f4f5] dark:bg-[#1f1f1f] hover:bg-[#e4e4e7] dark:hover:bg-[#2a2a2a] border border-[#e4e4e7] dark:border-[#2a2a2a] rounded-lg transition-colors">
+                    Read the docs
+                </a>
+            </div>
 
-                <div class="bg-white dark:bg-[#111111] border border-[#e4e4e7] dark:border-[#1f1f1f] rounded-lg p-6 shadow-sm dark:shadow-none">
-                    <p class="text-sm font-medium text-[#71717a] mb-1">Free</p>
-                    <div class="flex items-end gap-1 mb-6">
-                        <span class="text-3xl font-semibold">$0</span>
-                        <span class="text-sm text-[#71717a] mb-1">/mo</span>
-                    </div>
-                    <ul class="space-y-3 text-sm mb-6">
-                        <li class="flex justify-between"><span class="text-[#71717a]">Daily requests</span><span class="font-mono">2,000</span></li>
-                        <li class="flex justify-between"><span class="text-[#71717a]">Bulk endpoint</span><span class="text-[#71717a]">No</span></li>
-                        <li class="flex justify-between"><span class="text-[#71717a]">Support</span><span>Community</span></li>
-                    </ul>
-                    <a href="/register" class="block w-full text-center px-4 py-2 text-sm text-[#52525b] dark:text-[#a1a1aa] bg-[#f4f4f5] dark:bg-[#1f1f1f] hover:bg-[#e4e4e7] dark:hover:bg-[#2a2a2a] border border-[#e4e4e7] dark:border-[#2a2a2a] rounded-md transition-colors">Get started</a>
+            <div class="flex flex-wrap justify-center gap-6 pt-6 border-t border-[#e4e4e7] dark:border-[#1f1f1f]">
+                <div class="flex items-center gap-2 text-sm text-[#71717a]">
+                    <svg class="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Free plan available
                 </div>
-
-                <div class="relative">
-                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 text-xs font-medium bg-indigo-500 text-white rounded-full whitespace-nowrap z-10">most popular</div>
-                    <div class="bg-white dark:bg-[#111111] border border-indigo-400 dark:border-indigo-500 rounded-lg p-6 pt-8 shadow-sm dark:shadow-none">
-                        <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-1">Starter</p>
-                        <div class="flex items-end gap-1 mb-6">
-                            <span class="text-3xl font-semibold">$4</span>
-                            <span class="text-sm text-[#71717a] mb-1">/mo</span>
-                        </div>
-                        <ul class="space-y-3 text-sm mb-6">
-                            <li class="flex justify-between"><span class="text-[#71717a]">Daily requests</span><span class="font-mono">50,000</span></li>
-                            <li class="flex justify-between"><span class="text-[#71717a]">Bulk endpoint</span><span>Yes (20 domains)</span></li>
-                            <li class="flex justify-between"><span class="text-[#71717a]">Support</span><span>Email</span></li>
-                        </ul>
-                        <a href="/register" class="block w-full text-center px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-md transition-colors">Get started</a>
-                    </div>
+                <div class="flex items-center gap-2 text-sm text-[#71717a]">
+                    <svg class="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    No credit card to start
                 </div>
-
-                <div class="bg-white dark:bg-[#111111] border border-[#e4e4e7] dark:border-[#1f1f1f] rounded-lg p-6 shadow-sm dark:shadow-none">
-                    <p class="text-sm font-medium text-[#71717a] mb-1">Pro</p>
-                    <div class="flex items-end gap-1 mb-6">
-                        <span class="text-3xl font-semibold">$14</span>
-                        <span class="text-sm text-[#71717a] mb-1">/mo</span>
-                    </div>
-                    <ul class="space-y-3 text-sm mb-6">
-                        <li class="flex justify-between"><span class="text-[#71717a]">Daily requests</span><span class="font-mono">500,000</span></li>
-                        <li class="flex justify-between"><span class="text-[#71717a]">Bulk endpoint</span><span>Yes</span></li>
-                        <li class="flex justify-between"><span class="text-[#71717a]">Support</span><span>Priority</span></li>
-                    </ul>
-                    <a href="/register" class="block w-full text-center px-4 py-2 text-sm text-[#52525b] dark:text-[#a1a1aa] bg-[#f4f4f5] dark:bg-[#1f1f1f] hover:bg-[#e4e4e7] dark:hover:bg-[#2a2a2a] border border-[#e4e4e7] dark:border-[#2a2a2a] rounded-md transition-colors">Get started</a>
+                <div class="flex items-center gap-2 text-sm text-[#71717a]">
+                    <svg class="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Cancel anytime
                 </div>
-
-                <div class="bg-white dark:bg-[#111111] border border-[#e4e4e7] dark:border-[#1f1f1f] rounded-lg p-6 shadow-sm dark:shadow-none">
-                    <p class="text-sm font-medium text-[#71717a] mb-1">Business</p>
-                    <div class="flex items-end gap-1 mb-6">
-                        <span class="text-3xl font-semibold">$39</span>
-                        <span class="text-sm text-[#71717a] mb-1">/mo</span>
-                    </div>
-                    <ul class="space-y-3 text-sm mb-6">
-                        <li class="flex justify-between"><span class="text-[#71717a]">Daily requests</span><span>Unlimited</span></li>
-                        <li class="flex justify-between"><span class="text-[#71717a]">Bulk endpoint</span><span>Yes</span></li>
-                        <li class="flex justify-between"><span class="text-[#71717a]">Support</span><span>Dedicated</span></li>
-                    </ul>
-                    <a href="/register" class="block w-full text-center px-4 py-2 text-sm text-[#52525b] dark:text-[#a1a1aa] bg-[#f4f4f5] dark:bg-[#1f1f1f] hover:bg-[#e4e4e7] dark:hover:bg-[#2a2a2a] border border-[#e4e4e7] dark:border-[#2a2a2a] rounded-md transition-colors">Get started</a>
-                </div>
-
             </div>
         </div>
     </section>
