@@ -28,7 +28,7 @@ COPY . .
 # Overlay Vite-built assets from the frontend stage
 COPY --from=frontend /app/public/build ./public/build
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction \
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache \
