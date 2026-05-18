@@ -1,0 +1,29 @@
+[Unit]
+Description=RDAPLook Queue Worker
+Documentation=https://laravel.com/docs/queues
+After=network.target redis-server.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/rdaplook
+
+ExecStart=/usr/bin/php8.3 /var/www/rdaplook/artisan queue:work redis \
+    --sleep=3 \
+    --tries=3 \
+    --max-time=3600
+
+Restart=always
+RestartSec=5
+KillMode=process
+KillSignal=SIGTERM
+
+# Give in-flight jobs 30 seconds to finish before hard kill
+TimeoutStopSec=30
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=rdaplook-worker
+
+[Install]
+WantedBy=multi-user.target

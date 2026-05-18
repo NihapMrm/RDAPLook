@@ -1,0 +1,88 @@
+name: Test & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+
+  # ── Test job — runs on GitHub's servers, never touches the VPS ──────────────
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, curl, redis, zip, bcmath, intl, sockets, sqlite3
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-scripts
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run tests
+        run: php artisan test --parallel
+
+  # ── Deploy job — runs only after test job passes ─────────────────────────────
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [test]
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key:      ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            APP_DIR="/var/www/rdaplook"
+            cd "$APP_DIR"
+
+            echo "→ Pulling latest code..."
+            git pull origin main
+
+            echo "→ Installing PHP dependencies..."
+            composer install --no-dev --optimize-autoloader
+
+            echo "→ Building frontend assets..."
+            npm ci
+            npm run build
+
+            echo "→ Caching config, routes, views..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "→ Restarting queue worker..."
+            sudo systemctl restart rdaplook-worker
+
+            echo "→ Reloading Nginx..."
+            sudo systemctl reload nginx
+
+            echo "✓ Deployed at $(date)"
