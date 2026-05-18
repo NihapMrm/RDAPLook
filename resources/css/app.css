@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
+
+/* Hero dot-grid background */
+.dot-grid {
+    background-image: radial-gradient(circle, #b4b4b8 1.5px, transparent 1.5px);
+    background-size: 28px 28px;
+}
+.dark .dot-grid {
+    background-image: radial-gradient(circle, #303030 1.5px, transparent 1.5px);
+}
+
 /* Dark scrollbar for the code editor body */
 .editor-scroll::-webkit-scrollbar {
     height: 5px;

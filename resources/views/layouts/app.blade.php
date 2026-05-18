@@ -20,7 +20,7 @@
 <body class="bg-white dark:bg-[#0a0a0a] text-[#09090b] dark:text-[#f4f4f5] font-sans antialiased transition-colors duration-150">
 
     {{-- Navbar --}}
-    <nav class="sticky top-0 z-50 border-b border-[#e4e4e7] dark:border-[#1f1f1f] bg-white/90 dark:bg-[#0a0a0a]/80 backdrop-blur-sm">
+    <nav class="fixed top-0 left-0 right-0 z-50 border border-[#e4e4e7] dark:border-[#1f1f1f] bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md w-11/12 m-auto">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="/" class="font-mono text-base font-medium tracking-tight">RDAPLook</a>
 

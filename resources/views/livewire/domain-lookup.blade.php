@@ -34,6 +34,24 @@
         </p>
     @endif
 
+    @if(!$searched)
+        <div class="flex flex-wrap justify-center gap-x-8 gap-y-3 mt-8">
+            @foreach([
+                ['2,000 req/day free',      'M5 13l4 4L19 7'],
+                ['No credit card',          'M5 13l4 4L19 7'],
+                ['All TLDs supported',      'M5 13l4 4L19 7'],
+                ['Response &lt; 300ms',     'M5 13l4 4L19 7'],
+            ] as [$label, $path])
+            <span class="flex items-center gap-1.5 text-xs text-[#71717a]">
+                <svg class="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $path }}"/>
+                </svg>
+                {!! $label !!}
+            </span>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Always in DOM so children receive events; invisible until first search --}}
     <div class="{{ $searched ? 'grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8' : 'hidden' }}">
         <livewire:domain-info-card />

@@ -10,23 +10,44 @@
 <main>
 
     {{-- ── Hero ──────────────────────────────────────────────────────────── --}}
-    <section class="pt-20 pb-16 px-4 sm:px-6">
-        <div class="max-w-3xl mx-auto text-center">
-            <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
-                Domain intelligence API.<br>
-                <span class="text-[#71717a]">WHOIS is dead.</span>
+    <section class="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 pt-16 pb-24 bg-[#fafafa] dark:bg-[#050505] border-b border-[#e4e4e7] dark:border-[#1a1a1a]">
+
+        {{-- Dot grid --}}
+        <div class="dot-grid absolute inset-0 pointer-events-none"></div>
+
+        {{-- Badge + headline + subtitle --}}
+        <div class="relative max-w-3xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 mb-8 text-xs font-medium bg-white dark:bg-[#111111] text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 rounded-full shadow-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                RDAP-native &middot; REST API &middot; Free to start
+            </div>
+
+            <h1 class="text-5xl sm:text-6xl font-semibold tracking-tight leading-[1.1]">
+                Domain intelligence<br>
+                <span class="text-[#71717a]">API. WHOIS is dead.</span>
             </h1>
-            <p class="mt-5 text-base sm:text-lg text-[#71717a] max-w-xl mx-auto">
-                RDAP-native. Clean JSON. 2,000 free requests/day. No credit card.
+            <p class="mt-6 text-base sm:text-lg text-[#71717a] max-w-xl mx-auto leading-relaxed">
+                RDAP-native. Clean JSON. 2,000 free requests/day.<br class="hidden sm:block"> No credit card required.
             </p>
         </div>
-        <div class="max-w-5xl mx-auto mt-12">
+
+        {{-- Search widget --}}
+        <div class="relative max-w-5xl w-full mx-auto mt-10">
             @livewire('domain-lookup')
+        </div>
+
+        {{-- Scroll indicator --}}
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+            <a href="#features" class="flex items-center justify-center w-8 h-8 rounded-full border border-[#d4d4d8] dark:border-[#2a2a2a] text-[#a1a1aa] hover:text-[#71717a] hover:border-[#a1a1aa] dark:hover:border-[#444] transition-colors animate-bounce">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </a>
         </div>
     </section>
 
     {{-- ── Features ──────────────────────────────────────────────────────── --}}
-    <section class="py-16 px-4 sm:px-6 border-t border-[#e4e4e7] dark:border-[#1f1f1f]">
+    <section id="features" class="py-16 px-4 sm:px-6 border-t border-[#e4e4e7] dark:border-[#1f1f1f]">
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
 
             <div class="bg-white dark:bg-[#111111] border border-[#e4e4e7] dark:border-[#1f1f1f] rounded-lg p-6 shadow-sm dark:shadow-none">
