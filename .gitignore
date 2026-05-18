@@ -8,7 +8,8 @@
 /vendor
 .env
 .env.backup
-.env.production
+# .env.production is intentionally tracked — it contains only placeholders, no real secrets.
+# Real secrets (APP_KEY, RAPIDAPI_PROXY_SECRET) are set directly in .env on the server.
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
