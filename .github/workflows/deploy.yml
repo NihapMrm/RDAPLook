@@ -67,22 +67,23 @@ jobs:
             echo "→ Pulling latest code..."
             git pull origin main
 
-            echo "→ Installing PHP dependencies..."
-            composer install --no-dev --optimize-autoloader
+            echo "→ Building Docker images (no cache)..."
+            docker compose build --no-cache
 
-            echo "→ Building frontend assets..."
-            npm ci
-            npm run build
+            echo "→ Starting containers..."
+            docker compose up -d
 
-            echo "→ Caching config, routes, views..."
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+            echo "→ Waiting for app container to be ready..."
+            sleep 5
 
-            echo "→ Restarting queue worker..."
-            sudo systemctl restart rdaplook-worker
+            echo "→ Running post-deploy artisan commands..."
+            docker compose exec -T app php artisan migrate --force
+            docker compose exec -T app php artisan package:discover --ansi
+            docker compose exec -T app php artisan config:cache
+            docker compose exec -T app php artisan route:cache
+            docker compose exec -T app php artisan view:cache
 
-            echo "→ Reloading Nginx..."
+            echo "→ Reloading host Nginx..."
             sudo systemctl reload nginx
 
             echo "✓ Deployed at $(date)"

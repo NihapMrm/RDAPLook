@@ -46,9 +46,6 @@ server {
     listen [::]:443 ssl http2;
     server_name rdaplook.com;
 
-    root  /var/www/rdaplook/public;
-    index index.php;
-
     # Certbot will replace these two lines
     ssl_certificate     /etc/letsencrypt/live/rdaplook.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/rdaplook.com/privkey.pem;
@@ -81,6 +78,9 @@ server {
     set_real_ip_from   2c0f:f248::/32;
 
     # ── Security headers ────────────────────────────────────────────────────
+    # Note: these are inherited by location / only.
+    # Static asset locations below must repeat them to avoid nginx's
+    # "add_header in child block replaces parent" behaviour.
     add_header X-Frame-Options        "SAMEORIGIN"           always;
     add_header X-Content-Type-Options "nosniff"              always;
     add_header Referrer-Policy        "strict-origin-when-cross-origin" always;
@@ -105,41 +105,48 @@ server {
         application/vnd.ms-fontobject
         image/svg+xml;
 
+    # ── Upstream proxy settings (inherited by all proxy_pass locations) ──────
+    proxy_http_version 1.1;
+    proxy_set_header   Host              $host;
+    proxy_set_header   X-Real-IP         $remote_addr;
+    proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Proto $scheme;
+    proxy_set_header   X-Forwarded-Host  $host;
+    proxy_set_header   Connection        "";
+    proxy_read_timeout 60s;
+
     # ── Static asset caching ─────────────────────────────────────────────────
+    # Security headers duplicated here because add_header in a child location
+    # does not inherit the server-block add_header directives.
     location ~* \.(css|js|woff|woff2|ttf|otf|eot|svg)$ {
         expires    1y;
-        add_header Cache-Control "public, immutable";
+        add_header Cache-Control        "public, immutable"              always;
+        add_header X-Frame-Options        "SAMEORIGIN"                   always;
+        add_header X-Content-Type-Options "nosniff"                      always;
+        add_header Referrer-Policy        "strict-origin-when-cross-origin" always;
+        add_header X-XSS-Protection       "1; mode=block"                always;
         access_log off;
+        proxy_pass http://127.0.0.1:8100;
     }
 
     location ~* \.(jpg|jpeg|png|gif|ico|webp|avif)$ {
         expires    30d;
-        add_header Cache-Control "public";
+        add_header Cache-Control        "public"                         always;
+        add_header X-Frame-Options        "SAMEORIGIN"                   always;
+        add_header X-Content-Type-Options "nosniff"                      always;
+        add_header Referrer-Policy        "strict-origin-when-cross-origin" always;
+        add_header X-XSS-Protection       "1; mode=block"                always;
         access_log off;
+        proxy_pass http://127.0.0.1:8100;
     }
 
-    # ── Laravel routing ──────────────────────────────────────────────────────
+    # ── All other requests → Docker (nginx inside container handles routing) ──
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        proxy_pass http://127.0.0.1:8100;
     }
 
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    # ── PHP-FPM ─────────────────────────────────────────────────────────────
-    location ~ \.php$ {
-        fastcgi_pass   unix:/var/run/php/php8.3-fpm.sock;
-        fastcgi_index  index.php;
-        fastcgi_param  SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include        fastcgi_params;
-
-        fastcgi_buffer_size        128k;
-        fastcgi_buffers            4 256k;
-        fastcgi_busy_buffers_size  256k;
-        fastcgi_read_timeout       60;
-    }
+    location = /favicon.ico { access_log off; log_not_found off; proxy_pass http://127.0.0.1:8100; }
+    location = /robots.txt  { access_log off; log_not_found off; proxy_pass http://127.0.0.1:8100; }
 
     # ── Block hidden files ────────────────────────────────────────────────────
     location ~ /\.(?!well-known).* {
