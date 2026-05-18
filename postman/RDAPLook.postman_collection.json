@@ -1,0 +1,788 @@
+{
+  "info": {
+    "name": "RDAPLook API",
+    "description": "Domain intelligence API powered by RDAP and DNS lookups.\n\n**Authentication:** Pass your API key in the `X-API-Key` header.\n\n**Rate limit headers** are returned on every authenticated response:\n- `X-RateLimit-Limit` – daily cap for your plan\n- `X-RateLimit-Remaining` – requests left today\n- `X-RateLimit-Reset` – Unix timestamp when the counter resets (midnight UTC)\n\n**Standard error shape:**\n```json\n{ \"error\": true, \"code\": \"ERROR_CODE\", \"message\": \"Human readable message\" }\n```",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "rdaplook-v1-collection"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key",   "value": "X-API-Key",       "type": "string" },
+      { "key": "value", "value": "{{api_key}}",      "type": "string" },
+      { "key": "in",    "value": "header",           "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "base_url", "value": "{{base_url}}" }
+  ],
+  "item": [
+    {
+      "name": "Domain RDAP",
+      "description": "RDAP-based domain registration lookups. Results are cached in Redis for 24 h.",
+      "item": [
+        {
+          "name": "Lookup – github.com",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has domain field', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.domain).to.be.a('string');",
+                  "});",
+                  "pm.test('Has registrar object', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.registrar).to.be.an('object');",
+                  "    pm.expect(j.registrar.name).to.be.a('string');",
+                  "});",
+                  "pm.test('Has dates object', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.dates).to.include.keys(['registered', 'updated', 'expires']);",
+                  "});",
+                  "pm.test('Has nameservers array', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.nameservers).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "pm.test('Has status array', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.status).to.be.an('array');",
+                  "});",
+                  "pm.test('dnssec is boolean', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.dnssec).to.be.a('boolean');",
+                  "});",
+                  "pm.test('Has contacts object', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.contacts).to.include.keys(['registrant', 'admin', 'tech']);",
+                  "});",
+                  "pm.test('No raw_rdap by default', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j).to.not.have.property('raw_rdap');",
+                  "});",
+                  "pm.test('Rate limit headers present', () => {",
+                  "    pm.expect(pm.response.headers.get('X-RateLimit-Limit')).to.exist;",
+                  "    pm.expect(pm.response.headers.get('X-RateLimit-Remaining')).to.exist;",
+                  "    pm.expect(pm.response.headers.get('X-RateLimit-Reset')).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/{{test_domain}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "{{test_domain}}"]
+            },
+            "description": "Full RDAP lookup for a registered domain. Returns normalised registrar, dates, nameservers, status, DNSSEC, and contacts."
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup with raw=true",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('raw_rdap field present when ?raw=true', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j).to.have.property('raw_rdap');",
+                  "    pm.expect(j.raw_rdap).to.be.an('object');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/{{test_domain}}?raw=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "{{test_domain}}"],
+              "query": [{ "key": "raw", "value": "true" }]
+            },
+            "description": "Same as the standard lookup but includes the original unmodified RDAP response under `raw_rdap`."
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup – DNSSEC signed (cloudflare.com)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('dnssec is true for cloudflare.com', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.dnssec).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/cloudflare.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "cloudflare.com"]
+            },
+            "description": "cloudflare.com has DNSSEC enabled — useful to verify the `dnssec: true` path."
+          },
+          "response": []
+        },
+        {
+          "name": "Lookup – ccTLD (.io)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('domain ends with .io', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.domain).to.match(/\\.io$/);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/vercel.io",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "vercel.io"]
+            },
+            "description": "ccTLD lookup — exercises the IANA bootstrap fallback path."
+          },
+          "response": []
+        },
+        {
+          "name": "Error – invalid domain format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('INVALID_DOMAIN error code', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.error).to.be.true;",
+                  "    pm.expect(j.code).to.equal('INVALID_DOMAIN');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/not_a_valid_domain",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "not_a_valid_domain"]
+            },
+            "description": "Passes an invalid domain name — expects INVALID_DOMAIN 422."
+          },
+          "response": []
+        },
+        {
+          "name": "Error – domain not found (RDAP 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('DOMAIN_NOT_FOUND error code', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.error).to.be.true;",
+                  "    pm.expect(j.code).to.equal('DOMAIN_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/{{test_domain_available}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "{{test_domain_available}}"]
+            },
+            "description": "Looks up an unregistered domain — expects DOMAIN_NOT_FOUND 404."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "DNS Records",
+      "description": "PHP `dns_get_record()` based resolution. Returns A, AAAA, MX, NS, TXT, CNAME, SOA records.",
+      "item": [
+        {
+          "name": "Resolve – github.com (all types)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has domain field', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.domain).to.be.a('string');",
+                  "});",
+                  "pm.test('Records object has all 7 type keys', () => {",
+                  "    const j = pm.response.json();",
+                  "    ['A','AAAA','MX','NS','TXT','CNAME','SOA'].forEach(t => {",
+                  "        pm.expect(j.records).to.have.property(t);",
+                  "        pm.expect(j.records[t]).to.be.an('array');",
+                  "    });",
+                  "});",
+                  "pm.test('A records have ip and ttl', () => {",
+                  "    const a = pm.response.json().records.A;",
+                  "    if (a.length > 0) {",
+                  "        pm.expect(a[0]).to.have.property('ip');",
+                  "        pm.expect(a[0]).to.have.property('ttl');",
+                  "    }",
+                  "});",
+                  "pm.test('MX records have priority', () => {",
+                  "    const mx = pm.response.json().records.MX;",
+                  "    if (mx.length > 0) {",
+                  "        pm.expect(mx[0]).to.have.property('priority');",
+                  "        pm.expect(mx[0]).to.have.property('target');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dns/{{test_domain}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "dns", "{{test_domain}}"]
+            },
+            "description": "Resolves all DNS record types for the domain."
+          },
+          "response": []
+        },
+        {
+          "name": "Resolve – google.com (MX heavy)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('google.com has MX records', () => {",
+                  "    const mx = pm.response.json().records.MX;",
+                  "    pm.expect(mx).to.be.an('array').that.is.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dns/google.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "dns", "google.com"]
+            },
+            "description": "google.com is useful for confirming MX + multiple A records."
+          },
+          "response": []
+        },
+        {
+          "name": "Error – invalid domain format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('INVALID_DOMAIN code', () => {",
+                  "    pm.expect(pm.response.json().code).to.equal('INVALID_DOMAIN');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dns/-bad-domain-",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "dns", "-bad-domain-"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Availability",
+      "description": "Fast registered/available check via RDAP. Cached in Redis for 1 hour.",
+      "item": [
+        {
+          "name": "Check – registered domain",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('registered is true', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.registered).to.be.true;",
+                  "    pm.expect(j.domain).to.be.a('string');",
+                  "    pm.expect(j.checked_at).to.be.a('string');",
+                  "});",
+                  "pm.test('expires is set for registered domain', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.expires).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/availability/{{test_domain}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "availability", "{{test_domain}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check – available domain",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('registered is false for available domain', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.registered).to.be.false;",
+                  "    pm.expect(j.expires).to.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/availability/{{test_domain_available}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "availability", "{{test_domain_available}}"]
+            },
+            "description": "Checks a domain that should not be registered."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bulk Availability",
+      "description": "Check up to 20 domains in a single POST. Results may be partially served from cache.",
+      "item": [
+        {
+          "name": "Bulk check – mixed registered + available",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('results is an array', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.results).to.be.an('array');",
+                  "    pm.expect(j.results.length).to.equal(3);",
+                  "});",
+                  "pm.test('each result has domain and registered fields', () => {",
+                  "    pm.response.json().results.forEach(r => {",
+                  "        pm.expect(r).to.have.property('domain');",
+                  "        pm.expect(r).to.have.property('registered');",
+                  "        pm.expect(r).to.have.property('checked_at');",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domains\": [\n    \"github.com\",\n    \"google.com\",\n    \"{{test_domain_available}}\"\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bulk",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bulk"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk check – max 20 domains",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('20 results returned', () => {",
+                  "    pm.expect(pm.response.json().results.length).to.equal(20);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domains\": [\n    \"google.com\",\"github.com\",\"microsoft.com\",\"amazon.com\",\"apple.com\",\n    \"netflix.com\",\"twitter.com\",\"facebook.com\",\"linkedin.com\",\"stripe.com\",\n    \"shopify.com\",\"vercel.com\",\"cloudflare.com\",\"digitalocean.com\",\"heroku.com\",\n    \"laravel.com\",\"php.net\",\"packagist.org\",\"npmjs.com\",\"python.org\"\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bulk",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bulk"]
+            },
+            "description": "Sends exactly 20 domains — the maximum allowed."
+          },
+          "response": []
+        },
+        {
+          "name": "Error – exceeds 20 domains",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('VALIDATION_ERROR code', () => {",
+                  "    pm.expect(pm.response.json().code).to.equal('VALIDATION_ERROR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domains\": [\n    \"a.com\",\"b.com\",\"c.com\",\"d.com\",\"e.com\",\n    \"f.com\",\"g.com\",\"h.com\",\"i.com\",\"j.com\",\n    \"k.com\",\"l.com\",\"m.com\",\"n.com\",\"o.com\",\n    \"p.com\",\"q.com\",\"r.com\",\"s.com\",\"t.com\",\"u.com\"\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bulk",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bulk"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error – missing domains field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('VALIDATION_ERROR code', () => {",
+                  "    pm.expect(pm.response.json().code).to.equal('VALIDATION_ERROR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bulk",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bulk"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication & Rate Limiting",
+      "description": "Tests for API key validation and rate-limit header behaviour.",
+      "item": [
+        {
+          "name": "Error – missing X-API-Key header",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('INVALID_API_KEY code', () => {",
+                  "    const j = pm.response.json();",
+                  "    pm.expect(j.error).to.be.true;",
+                  "    pm.expect(j.code).to.equal('INVALID_API_KEY');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/example.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "example.com"]
+            },
+            "description": "Sends no API key — expects 401 INVALID_API_KEY."
+          },
+          "response": []
+        },
+        {
+          "name": "Error – wrong API key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('INVALID_API_KEY code', () => {",
+                  "    pm.expect(pm.response.json().code).to.equal('INVALID_API_KEY');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [
+              { "key": "X-API-Key", "value": "rdap_00000000-0000-0000-0000-000000000000" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/domain/example.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "domain", "example.com"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rate limit headers on success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('All three rate-limit headers are present', () => {",
+                  "    const limit     = pm.response.headers.get('X-RateLimit-Limit');",
+                  "    const remaining = pm.response.headers.get('X-RateLimit-Remaining');",
+                  "    const reset     = pm.response.headers.get('X-RateLimit-Reset');",
+                  "    pm.expect(limit).to.exist;",
+                  "    pm.expect(remaining).to.exist;",
+                  "    pm.expect(reset).to.exist;",
+                  "});",
+                  "pm.test('Remaining <= Limit', () => {",
+                  "    const limit     = parseInt(pm.response.headers.get('X-RateLimit-Limit'));",
+                  "    const remaining = parseInt(pm.response.headers.get('X-RateLimit-Remaining'));",
+                  "    pm.expect(remaining).to.be.at.most(limit);",
+                  "});",
+                  "pm.test('Reset is a future Unix timestamp', () => {",
+                  "    const reset = parseInt(pm.response.headers.get('X-RateLimit-Reset'));",
+                  "    pm.expect(reset).to.be.above(Date.now() / 1000);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/availability/example.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "availability", "example.com"]
+            },
+            "description": "Verifies all three X-RateLimit-* headers are present and internally consistent."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhooks – Lemon Squeezy",
+      "description": "Webhook endpoint called by Lemon Squeezy on subscription events. In production the request is HMAC-SHA256 signed.",
+      "item": [
+        {
+          "name": "subscription_created",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Signature",  "value": "{{lemon_squeezy_webhook_secret}}", "description": "HMAC-SHA256 of the raw body. Leave blank in local dev (signature check is skipped when secret is not configured)." }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"meta\": {\n    \"event_name\": \"subscription_created\",\n    \"custom_data\": {}\n  },\n  \"data\": {\n    \"id\": \"ls_sub_test_001\",\n    \"type\": \"subscriptions\",\n    \"attributes\": {\n      \"status\": \"active\",\n      \"user_email\": \"test@rdaplook.dev\",\n      \"variant_id\": 12345,\n      \"renews_at\": \"2026-06-18T00:00:00.000Z\"\n    }\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/lemon-squeezy",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhooks", "lemon-squeezy"]
+            },
+            "description": "Simulates a `subscription_created` event from Lemon Squeezy. In local dev the signature check is skipped when `LEMON_SQUEEZY_WEBHOOK_SECRET` is empty."
+          },
+          "response": []
+        },
+        {
+          "name": "subscription_cancelled",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Signature",  "value": "{{lemon_squeezy_webhook_secret}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"meta\": {\n    \"event_name\": \"subscription_cancelled\"\n  },\n  \"data\": {\n    \"id\": \"ls_sub_test_001\",\n    \"type\": \"subscriptions\",\n    \"attributes\": {\n      \"status\": \"cancelled\",\n      \"user_email\": \"test@rdaplook.dev\"\n    }\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/lemon-squeezy",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhooks", "lemon-squeezy"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "subscription_updated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Signature",  "value": "{{lemon_squeezy_webhook_secret}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"meta\": {\n    \"event_name\": \"subscription_updated\"\n  },\n  \"data\": {\n    \"id\": \"ls_sub_test_001\",\n    \"type\": \"subscriptions\",\n    \"attributes\": {\n      \"status\": \"active\",\n      \"user_email\": \"test@rdaplook.dev\",\n      \"variant_id\": 99999,\n      \"renews_at\": \"2026-07-18T00:00:00.000Z\"\n    }\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhooks/lemon-squeezy",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhooks", "lemon-squeezy"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
