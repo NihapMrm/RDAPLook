@@ -33,10 +33,16 @@ class BulkController extends Controller
      */
     public function check(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'domains'   => ['required', 'array', 'min:1', 'max:' . self::MAX_DOMAINS],
-            'domains.*' => ['required', 'string', 'max:253'],
-        ]);
+        $body    = $request->json()->all();
+        $domains = isset($body['domains']) ? $body['domains'] : $body;
+
+        $validator = Validator::make(
+            ['domains' => $domains],
+            [
+                'domains'   => ['required', 'array', 'min:1', 'max:' . self::MAX_DOMAINS],
+                'domains.*' => ['required', 'string', 'max:253'],
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -48,7 +54,7 @@ class BulkController extends Controller
 
         $domains = array_map(
             fn ($d) => strtolower(trim($d, '.')),
-            $request->input('domains')
+            $domains
         );
 
         $invalidDomains = array_filter($domains, fn ($d) => !$this->isValidDomain($d));
