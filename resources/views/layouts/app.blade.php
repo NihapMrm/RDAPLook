@@ -20,15 +20,14 @@
 <body class="bg-white dark:bg-[#0a0a0a] text-[#09090b] dark:text-[#f4f4f5] font-sans antialiased transition-colors duration-150">
 
     {{-- Navbar --}}
-    <nav class="fixed top-0 left-0 right-0 z-50 border border-[#e4e4e7] dark:border-[#1f1f1f] bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md w-11/12 m-auto">
+    <nav class="fixed top-0 left-0 right-0 z-50 border border-[#e4e4e7] dark:border-[#1f1f1f] bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md w-11/12 m-auto rounded-xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="/" class="font-mono text-base font-medium tracking-tight">RDAPLook</a>
 
             <div class="flex items-center gap-5">
                 <div class="hidden sm:flex items-center gap-5">
-                    <a href="/docs" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Docs</a>
-                    <a href="#pricing" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Pricing</a>
-                    <a href="https://github.com/rdaplook" target="_blank" rel="noopener" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">GitHub</a>
+                    <a href="/docs" class="text-sm transition-colors {{ Request::is('docs') ? 'text-[#09090b] dark:text-[#f4f4f5] font-medium' : 'text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5]' }}">Docs</a>
+                    <a href="/#pricing" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Pricing</a>
                     <a href="https://rapidapi.com/rdaplook/api/rdaplook" target="_blank" rel="noopener" class="px-4 py-1.5 text-sm font-medium bg-indigo-500 hover:bg-indigo-600 text-white rounded-md transition-colors">Get API Key</a>
                 </div>
 
@@ -62,9 +61,8 @@
                 <p class="text-sm text-[#71717a]">RDAPLook — RDAP-native domain intelligence API</p>
                 <div class="flex flex-wrap gap-x-5 gap-y-2">
                     <a href="/docs" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Docs</a>
-                    <a href="#pricing" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Pricing</a>
-                    <a href="#" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">RapidAPI</a>
-                    <a href="https://github.com/rdaplook" target="_blank" rel="noopener" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">GitHub</a>
+                    <a href="/#pricing" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Pricing</a>
+                    <a href="https://rapidapi.com/rdaplook/api/rdaplook" target="_blank" rel="noopener" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">RapidAPI</a>
                     <a href="/terms" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Terms</a>
                     <a href="/privacy" class="text-sm text-[#71717a] hover:text-[#09090b] dark:hover:text-[#f4f4f5] transition-colors">Privacy</a>
                 </div>

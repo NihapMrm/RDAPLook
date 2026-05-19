@@ -123,6 +123,7 @@
                         copied: false,
                         copy() {
                             const pre = this.$root.querySelector('pre[data-tab=' + this.tab + ']');
+                            if (!pre) return;
                             navigator.clipboard.writeText(pre.textContent.trim());
                             this.copied = true;
                             setTimeout(() => this.copied = false, 2000);
@@ -283,6 +284,7 @@ fmt.<span class="text-amber-400">Println</span>(domain[<span class="text-emerald
                         copied: false,
                         copy() {
                             const pre = this.$root.querySelector('pre[data-tab=' + this.tab + ']');
+                            if (!pre) return;
                             navigator.clipboard.writeText(pre.textContent.trim());
                             this.copied = true;
                             setTimeout(() => this.copied = false, 2000);
@@ -405,7 +407,7 @@ fmt.<span class="text-amber-400">Println</span>(domain[<span class="text-emerald
                             {{-- POST /bulk --}}
                             <pre data-tab="bulk" x-show="tab==='bulk'" style="display:none" class="whitespace-pre p-5"><code
 >{
-  <span class="text-sky-400">"domains"</span>: [
+  <span class="text-sky-400">"results"</span>: [
     { <span class="text-sky-400">"domain"</span>: <span class="text-emerald-400">"google.com"</span>, <span class="text-sky-400">"registered"</span>: <span class="text-green-400">true</span>,  <span class="text-sky-400">"expires"</span>: <span class="text-emerald-400">"2028-09-14T04:00:00Z"</span> },
     { <span class="text-sky-400">"domain"</span>: <span class="text-emerald-400">"google.net"</span>, <span class="text-sky-400">"registered"</span>: <span class="text-green-400">true</span>,  <span class="text-sky-400">"expires"</span>: <span class="text-emerald-400">"2027-03-15T04:00:00Z"</span> },
     { <span class="text-sky-400">"domain"</span>: <span class="text-emerald-400">"google.org"</span>, <span class="text-sky-400">"registered"</span>: <span class="text-green-400">true</span>,  <span class="text-sky-400">"expires"</span>: <span class="text-emerald-400">"2026-10-20T04:00:00Z"</span> },
