@@ -9,6 +9,8 @@
     <meta property="og:description" content="@yield('og_description', 'RDAP-native domain intelligence API. Clean JSON, 2,000 free requests/day, $4/mo to upgrade. The modern replacement for WHOIS API.')">
     <meta property="og:url" content="@yield('og_url', 'https://rdaplook.com')">
     <meta property="og:type" content="website">
+    <link rel="icon" type="image/svg+xml" href="/rdaplook.svg">
+    <link rel="alternate icon" href="/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,7 +24,10 @@
     {{-- Navbar --}}
     <nav class="fixed top-0 left-0 right-0 z-50 border border-[#e4e4e7] dark:border-[#1f1f1f] bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md w-11/12 m-auto rounded-xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="/" class="font-mono text-base font-medium tracking-tight">RDAPLook</a>
+            <a href="/" class="flex items-center gap-2 font-mono text-base font-medium tracking-tight">
+                <img src="/rdaplook.svg" alt="RDAPLook" class="w-7 h-7 rounded-md">
+                RDAPLook
+            </a>
 
             <div class="flex items-center gap-5">
                 <div class="hidden sm:flex items-center gap-5">
