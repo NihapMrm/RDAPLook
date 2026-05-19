@@ -11,6 +11,11 @@ mkdir -p \
     /var/www/html/storage/logs \
     /var/www/html/storage/app/public
 
+# Wipe stale package/service manifests from the named cache volume so artisan
+# always regenerates them from the current vendor/ contents on first run.
+rm -f /var/www/html/bootstrap/cache/packages.php \
+      /var/www/html/bootstrap/cache/services.php
+
 # On every container start, sync the built public/ assets from the image snapshot
 # into the shared named volume so nginx always serves the current build.
 cp -r /var/www/html/public-snapshot/. /var/www/html/public/
